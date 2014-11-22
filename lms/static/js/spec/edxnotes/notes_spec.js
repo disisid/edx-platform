@@ -1,12 +1,12 @@
-define(['jquery', 'js/edxnotes/views/notes', 'jasmine-jquery'],
+define(['jquery', 'js/edxnotes/views/notes_factory', 'jasmine-jquery'],
     function($, Notes) {
         'use strict';
 
-        describe('Test notes', function() {
+        describe('EdxNotes Notes', function() {
             var wrapper;
 
             beforeEach(function() {
-                loadFixtures('js/fixtures/edxnotes/edxnotes.html');
+                loadFixtures('js/fixtures/edxnotes/edxnotes_wrapper.html');
                 wrapper = $('div#edx-notes-wrapper-123');
             });
 
