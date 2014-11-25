@@ -3,28 +3,25 @@
 """Tests for Django management commands"""
 
 import json
+from path import path
 import shutil
 from StringIO import StringIO
 import tarfile
 from tempfile import mkdtemp
 
-from path import path
-
+from django.conf import settings
 from django.core.management import call_command
 from django.test.utils import override_settings
 from django.test.testcases import TestCase
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
-from courseware.tests.modulestore_config import TEST_DATA_XML_MODULESTORE
-from courseware.tests.modulestore_config import TEST_DATA_MIXED_MODULESTORE
-from courseware.tests.modulestore_config import TEST_DATA_MONGO_MODULESTORE
-
+from xmodule.modulestore.tests.django_utils import TEST_DATA_XML_MODULESTORE
+from xmodule.modulestore.tests.django_utils import TEST_DATA_MONGO_MODULESTORE
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.xml_importer import import_from_xml
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from django.conf import settings
 
 DATA_DIR = settings.COMMON_TEST_DATA_ROOT
 
@@ -205,14 +202,6 @@ class CommandsXMLTestCase(CommandsTestBase, ModuleStoreTestCase):
 @override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE)
 class CommandsMongoTestCase(CommandsTestBase, ModuleStoreTestCase):
     """
-    Test case for management commands using the mongo modulestore.
-
-    """
-
-
-@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
-class CommandsMixedTestCase(CommandsTestBase, ModuleStoreTestCase):
-    """
-    Test case for management commands. Using the mixed modulestore.
+    Test case for management commands using the mixed mongo modulestore.
 
     """
