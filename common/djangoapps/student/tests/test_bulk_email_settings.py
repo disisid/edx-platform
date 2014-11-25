@@ -4,25 +4,23 @@ that bulk email is always disabled for non-Mongo backed courses, regardless
 of email feature flag, and that the view is conditionally available when
 Course Auth is turned on.
 """
-
-from django.test.utils import override_settings
-from django.conf import settings
-from django.core.urlresolvers import reverse
 import unittest
 
-from courseware.tests.tests import TEST_DATA_MONGO_MODULESTORE
-from student.tests.factories import UserFactory, CourseEnrollmentFactory
-from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
-from xmodule.modulestore.tests.factories import CourseFactory
-from courseware.tests.modulestore_config import TEST_DATA_MIXED_MODULESTORE
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.test.utils import override_settings
+from mock import patch
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from bulk_email.models import CourseAuthorization
+from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE
+from xmodule.modulestore.tests.django_utils import TEST_DATA_MIXED_TOY_MODULESTORE
+from student.tests.factories import UserFactory, CourseEnrollmentFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
+from xmodule.modulestore.tests.factories import CourseFactory
 
-from mock import patch
 
-
-@override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_MOCK_MODULESTORE)
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class TestStudentDashboardEmailView(ModuleStoreTestCase):
     """
@@ -88,7 +86,7 @@ class TestStudentDashboardEmailView(ModuleStoreTestCase):
         self.assertTrue(self.email_modal_link in response.content)
 
 
-@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_MIXED_TOY_MODULESTORE)
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
 class TestStudentDashboardEmailViewXMLBacked(ModuleStoreTestCase):
     """

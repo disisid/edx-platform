@@ -6,9 +6,10 @@ from mock import patch
 from pytz import UTC
 
 from django.test.utils import override_settings
+from opaque_keys.edx.locations import Location
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 import capa.xqueue_interface as xqueue_interface
-from opaque_keys.edx.locations import Location
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.open_ended_grading_classes.openendedchild import OpenEndedChild
 from xmodule.tests.test_util_open_ended import (
@@ -17,17 +18,15 @@ from xmodule.tests.test_util_open_ended import (
 
 from courseware.courses import get_course_with_access
 from courseware.tests.factories import StudentModuleFactory, UserFactory
-from courseware.tests.modulestore_config import TEST_DATA_MIXED_MODULESTORE
+from xmodule.modulestore.tests.django_utils import TEST_DATA_MIXED_XML_MODULESTORE
 from student.models import anonymous_id_for_user
 
 from instructor.management.commands.openended_post import post_submission_for_student
 from instructor.management.commands.openended_stats import calculate_task_statistics
 from instructor.utils import get_module_for_student
 
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
-
-@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_MIXED_XML_MODULESTORE)
 class OpenEndedPostTest(ModuleStoreTestCase):
     """Test the openended_post management command."""
 
@@ -123,7 +122,7 @@ class OpenEndedPostTest(ModuleStoreTestCase):
         self.assertFalse(result)
 
 
-@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_MIXED_XML_MODULESTORE)
 class OpenEndedStatsTest(ModuleStoreTestCase):
     """Test the openended_stats management command."""
 

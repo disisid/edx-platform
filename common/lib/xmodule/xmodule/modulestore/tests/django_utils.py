@@ -2,22 +2,25 @@
 """
 Modulestore configuration for test cases.
 """
-import os
-import shutil
-from uuid import uuid4
-from django.test import TestCase
-from student.tests.factories import UserFactory
-
-from xmodule.contentstore.django import _CONTENTSTORE
-from xmodule.modulestore.django import modulestore, clear_existing_modulestores
-from xmodule.modulestore import ModuleStoreEnum
 import datetime
+import os
 import pytz
+import shutil
+from tempfile import mkdtemp
+from uuid import uuid4
+
+from django.conf import settings
+from django.test import TestCase
 from request_cache.middleware import RequestCache
-from xmodule.tabs import CoursewareTab, CourseInfoTab, StaticTab, DiscussionTab, ProgressTab, WikiTab
-from xmodule.modulestore.xml import XMLModuleStore
-from xmodule.modulestore.tests.sample_courses import default_block_info_tree, TOY_BLOCK_INFO_TREE
+
+from student.tests.factories import UserFactory
+from xmodule.contentstore.django import _CONTENTSTORE
+from xmodule.modulestore import ModuleStoreEnum
+from xmodule.modulestore.django import modulestore, clear_existing_modulestores
 from xmodule.modulestore.tests.mongo_connection import MONGO_PORT_NUM, MONGO_HOST
+from xmodule.modulestore.tests.sample_courses import default_block_info_tree, TOY_BLOCK_INFO_TREE
+from xmodule.modulestore.xml import XMLModuleStore
+from xmodule.tabs import CoursewareTab, CourseInfoTab, StaticTab, DiscussionTab, ProgressTab, WikiTab
 
 
 def mixed_store_config(data_dir, mappings, include_xml=True):
@@ -137,6 +140,44 @@ def xml_store_config(data_dir, course_dirs=None):
     }
 
     return store
+
+TEST_DATA_DIR = settings.COMMON_TEST_DATA_ROOT
+
+# Map all XML course fixtures so they are accessible through
+# the MixedModuleStore
+MAPPINGS = {
+    'edX/simple/2012_Fall': 'xml',
+    'edX/toy/2012_Fall': 'xml',
+    'edX/toy/TT_2012_Fall': 'xml',
+    'edX/test_end/2012_Fall': 'xml',
+    'edX/test_about_blob_end_date/2012_Fall': 'xml',
+    'edX/graded/2012_Fall': 'xml',
+    'edX/open_ended/2012_Fall': 'xml',
+    'edX/due_date/2013_fall': 'xml',
+    'edX/open_ended_nopath/2012_Fall': 'xml',
+    'edX/detached_pages/2014': 'xml',
+}
+
+# This is an XML only modulestore
+TEST_DATA_XML_MODULESTORE = xml_store_config(TEST_DATA_DIR)
+
+# This modulestore will provide both a mixed mongo editable modulestore, and
+# an XML store with all the above courses loaded.
+TEST_DATA_MIXED_XML_MODULESTORE = mixed_store_config(TEST_DATA_DIR, MAPPINGS)
+
+# This modulestore will provide both a mixed mongo editable modulestore, and
+# an XML store with just the toy course loaded.
+TEST_DATA_MIXED_TOY_MODULESTORE = mixed_store_config(TEST_DATA_DIR, {'edX/toy/2012_Fall': 'xml', })
+
+# All store requests now go through mixed
+# Use this modulestore if you specifically want to test mongo and not a mocked modulestore.
+# This modulestore definition below will not load any xml courses.
+TEST_DATA_MONGO_MODULESTORE = mixed_store_config(mkdtemp(), {}, include_xml=False)
+
+# Unit tests that are not specifically testing the modulestore implementation but just need course context can use a mocked modulestore.
+# Use this modulestore if you do not care about the underlying implementation.
+# TODO: acutally mock out the modulestore for this in a subsequent PR.
+TEST_DATA_MOCK_MODULESTORE = mixed_store_config(mkdtemp(), {}, include_xml=False)
 
 
 class ModuleStoreTestCase(TestCase):

@@ -2,9 +2,19 @@
 """
 Tests for course access
 """
-import mock
 
 from django.test.utils import override_settings
+import mock
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
+from courseware.courses import (
+    get_course_by_id, get_cms_course_link, course_image_url,
+    get_course_info_section, get_course_about_section, get_cms_block_link
+)
+from courseware.tests.helpers import get_request_for_user
+from xmodule.modulestore.tests.django_utils import (
+    TEST_DATA_MOCK_MODULESTORE, TEST_DATA_MIXED_TOY_MODULESTORE
+)
 from student.tests.factories import UserFactory
 import xmodule.modulestore.django as store_django
 from xmodule.modulestore import ModuleStoreEnum
@@ -12,14 +22,6 @@ from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.tests.xml import factories as xml
 from xmodule.tests.xml import XModuleXmlImportTest
-
-from courseware.courses import (
-    get_course_by_id, get_cms_course_link, course_image_url,
-    get_course_info_section, get_course_about_section, get_cms_block_link
-)
-from courseware.tests.helpers import get_request_for_user
-from courseware.tests.tests import TEST_DATA_MONGO_MODULESTORE, TEST_DATA_MIXED_MODULESTORE
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 
 CMS_BASE_TEST = 'testcms'
@@ -29,7 +31,7 @@ class CoursesTest(ModuleStoreTestCase):
     """Test methods related to fetching courses."""
 
     @override_settings(
-        MODULESTORE=TEST_DATA_MONGO_MODULESTORE, CMS_BASE=CMS_BASE_TEST
+        MODULESTORE=TEST_DATA_MOCK_MODULESTORE, CMS_BASE=CMS_BASE_TEST
     )
     def test_get_cms_course_block_link(self):
         """
@@ -71,7 +73,7 @@ class ModuleStoreBranchSettingTest(ModuleStoreTestCase):
 
 
 @override_settings(
-    MODULESTORE=TEST_DATA_MONGO_MODULESTORE, CMS_BASE=CMS_BASE_TEST
+    MODULESTORE=TEST_DATA_MOCK_MODULESTORE, CMS_BASE=CMS_BASE_TEST
 )
 class MongoCourseImageTestCase(ModuleStoreTestCase):
     """Tests for course image URLs when using a mongo modulestore."""
@@ -144,7 +146,7 @@ class XmlCourseImageTestCase(XModuleXmlImportTest):
         self.assertEquals(course_image_url(course), u'/static/xml_test_course/before after.jpg')
 
 
-@override_settings(MODULESTORE=TEST_DATA_MIXED_MODULESTORE)
+@override_settings(MODULESTORE=TEST_DATA_MIXED_TOY_MODULESTORE)
 class CoursesRenderTest(ModuleStoreTestCase):
     """Test methods related to rendering courses content."""
     toy_course_key = SlashSeparatedCourseKey('edX', 'toy', '2012_Fall')

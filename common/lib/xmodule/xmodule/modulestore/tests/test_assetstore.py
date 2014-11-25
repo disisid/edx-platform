@@ -3,20 +3,47 @@ Tests for assetstore using any of the modulestores for metadata. May extend to t
 too.
 """
 from datetime import datetime, timedelta
+import ddt
+from nose.plugins.attrib import attr
 import pytz
 import unittest
-import ddt
 
 from xmodule.assetstore import AssetMetadata
 from xmodule.modulestore import ModuleStoreEnum
-
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.test_cross_modulestore_import_export import (
     MIXED_MODULESTORE_BOTH_SETUP, MODULESTORE_SETUPS, MongoContentstoreBuilder,
-    XmlModulestoreBuilder, MixedModulestoreBuilder, MongoModulestoreBuilder
+    XmlModulestoreBuilder, MixedModulestoreBuilder
 )
 
 
+class AssetStoreTestData(object):
+    """
+    Shared data for constructing test assets.
+    """
+    now = datetime.now(pytz.utc)
+    user_id = 144
+    user_email = "me@example.com"
+
+    asset_fields = (
+        'filename', 'internal_name', 'basename', 'locked',
+        'edited_by', 'edited_by_email', 'edited_on', 'created_by', 'created_by_email', 'created_on',
+        'curr_version', 'prev_version'
+    )
+    all_asset_data = (
+        ('pic1.jpg', 'EKMND332DDBK', 'pix/archive', False, user_id, user_email, now, user_id, user_email, now, '14', '13'),
+        ('shout.ogg', 'KFMDONSKF39K', 'sounds', True, user_id, user_email, now, user_id, user_email, now, '1', None),
+        ('code.tgz', 'ZZB2333YBDMW', 'exercises/14', False, user_id * 2, user_email, now, user_id * 2, user_email, now, 'AB', 'AA'),
+        ('dog.png', 'PUPY4242X', 'pictures/animals', True, user_id * 3, user_email, now, user_id * 3, user_email, now, '5', '4'),
+        ('not_here.txt', 'JJJCCC747', '/dev/null', False, user_id * 4, user_email, now, user_id * 4, user_email, now, '50', '49'),
+        ('asset.txt', 'JJJCCC747858', '/dev/null', False, user_id * 4, user_email, now, user_id * 4, user_email, now, '50', '49'),
+        ('roman_history.pdf', 'JASDUNSADK', 'texts/italy', True, user_id * 7, user_email, now, user_id * 7, user_email, now, '1.1', '1.01'),
+        ('weather_patterns.bmp', '928SJXX2EB', 'science', False, user_id * 8, user_email, now, user_id * 8, user_email, now, '52', '51'),
+        ('demo.swf', 'DFDFGGGG14', 'demos/easy', False, user_id * 9, user_email, now, user_id * 9, user_email, now, '5', '4'),
+    )
+
+
+@attr('mongo')
 @ddt.ddt
 class TestMongoAssetMetadataStorage(unittest.TestCase):
     """
