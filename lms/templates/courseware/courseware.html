@@ -210,7 +210,7 @@ ${fragment.foot_html()}
 
     <section class="course-content" id="course-content">
       ${fragment.body_html()}
-      <%include file="/edxnotes/toggle_notes.html" args="edxnotes_visibility=course.edxnotes_visibility, edxnotes_visibility_url=edxnotes_visibility_url"/>
+      <%include file="/edxnotes/toggle_notes.html" args="show_toggle_checkbox=True,course=course"/>
     </section>
   </div>
 </div>

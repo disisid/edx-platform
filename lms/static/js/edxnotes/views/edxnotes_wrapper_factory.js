@@ -1,44 +1,13 @@
 ;(function (define, undefined) {
     'use strict';
     define(['jquery', 'underscore', 'js/edxnotes/views/notes'], function($, _, Notes) {
-        return function (elementId, params, visibility, visibilityUrl) {
-            var element = document.getElementById(elementId),
-                checkbox = $('a.action-toggle-notes'),
-                checkboxIcon = checkbox.children('i');
+        return function (elementId, params, visibility) {
+            var element = document.getElementById(elementId);
 
-            console.log('Initial visibility: ' + visibility);
-            toggleAnnotator();
-
-            checkbox.on('click', function(event) {
-                visibility = !visibility;
-                toggleCheckbox();
-
-                $.ajax({
-                    type: 'PUT',
-                    url: window.location.origin + visibilityUrl,
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify({'visibility': visibility}),
-                    success: function(response) {
-                        console.log('PUT Success.');
-                        toggleAnnotator();
-                    },
-                    error: function(response) {console.log('PUT Error.');}
-                });
-                event.preventDefault();
-            });
-
-            function toggleCheckbox() {
-                checkboxIcon.removeClass('icon-check icon-check-empty');
-                checkboxIcon.addClass(visibility ? 'icon-check' : 'icon-check-empty');
-            }
-
-            function toggleAnnotator() {
-                if (visibility) {
-                    createAnnotator();
-                } else {
-                    destroyAnnotator();
-                }
+            if (visibility) {
+                // Destroy all instances except those found on page being loaded
+                destroyAllInstancesExcept(getIds());
+                createAnnotator();
             }
 
             function createAnnotator() {
@@ -47,14 +16,23 @@
                 console.timeEnd(element);
             }
 
-            function destroyAnnotator() {
+            function getIds() {
+                var ids = [];
+                $('.edx-notes-wrapper').each(function(){
+                    ids.push($(this).attr('id'));
+                });
+                return ids;
+            }
+
+            function destroyAllInstancesExcept(ids) {
+                var len;
                 if (Annotator) {
-                    _.each(Annotator._instances, function(instance) {
-                        instance.destroy();
-                    });
-                    console.log('Destroyed Annotator.');
-                } else{
-                    console.log('No Annotator to destroy.');
+                    len = Annotator._instances.length;
+                    while (len--) {
+                        if (!_.contains(ids, Annotator._instances[len].element.attr('id'))) {
+                            Annotator._instances[len].destroy();
+                        }
+                    }
                 }
             }
         };

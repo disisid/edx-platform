@@ -9,9 +9,7 @@
 <script type="text/javascript">
     (function (require) {
         require(['js/edxnotes/views/edxnotes_wrapper_factory'], function(EdxnotesWrapperFactory) {
-            EdxnotesWrapperFactory(
-                'edx-notes-wrapper-${uid}', ${json.dumps(params)}, ${edxnotes_visibility}, '${edxnotes_visibility_url}'
-            );
+            EdxnotesWrapperFactory('edx-notes-wrapper-${uid}', ${json.dumps(params)}, ${edxnotes_visibility});
         });
     }).call(this, require || RequireJS.require);
 </script>
