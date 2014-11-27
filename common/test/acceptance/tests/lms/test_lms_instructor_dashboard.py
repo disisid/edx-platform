@@ -141,6 +141,7 @@ class ECommerceCouponsListTest(UniqueCourseTest):
         """
         self.coupons_list_section.click_to_show_add_coupon_popup()
         self.coupons_list_section.set_data_on_add_coupon_popup_and_submit(coupon_code="ABC123", discount="10", description="test")
+        self.assertTrue(self.coupons_list_section.compare_row_data(coupon_code="ABC123", discount="10", description="test", expiration_date="None", was_expired=False))
 
     def test_can_add_a_coupon_with_expiry_date(self):
         """

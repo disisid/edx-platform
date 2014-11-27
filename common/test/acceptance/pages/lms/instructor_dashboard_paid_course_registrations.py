@@ -177,8 +177,8 @@ class ECommercePageCouponsListSection(PageObject):
 
         self.q(css="#add_coupon_button").click()
 
-        # wait for modal to disappear.
-        self.wait_for_element_absence('#add-coupon-modal[style*="display: block"]', 'add coupon popup hidden')
+        # wait for page to reload.
+        self.wait_for_page()
 
     def compare_row_data(self, coupon_code, discount, description, was_expired=False, expiration_date=None):
         """
