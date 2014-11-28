@@ -240,27 +240,27 @@ class CourseModeViewTest(ModuleStoreTestCase):
         self.assertEqual(400, response.status_code)
 
 
-@patch.dict('django.conf.settings.FEATURES', {'CONVERT_TO_PAID_COURSE_REGISTRATION_MODE_FOR_TESTING': True})
 @override_settings(MODULESTORE=MODULESTORE_CONFIG)
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
-class AddHonorModeToCourseTest(ModuleStoreTestCase, UrlResetMixin):
+class AddHonorModeToCourseTest(UrlResetMixin, ModuleStoreTestCase):
     """
     Unittests for course_modes.views.add_honor_mode_to_course
     """
 
+    @patch.dict('django.conf.settings.FEATURES', {'CONVERT_TO_PAID_COURSE_REGISTRATION_MODE_FOR_TESTING': True})
     def setUp(self):
         super(AddHonorModeToCourseTest, self).setUp()
         self.course = CourseFactory.create()
         self.user = UserFactory.create(username="Bob", email="bob@example.com", password="edx")
         self.client.login(username=self.user.username, password="edx")
+        self.url = '/course_modes/add_honor_mode_to_course/'
 
     def test_add_honor_mode_to_course(self):
         """
         test to add the honor mode for the course id
         """
-        add_honor_mode_to_course_url = reverse('course_modes.views.add_honor_mode_to_course')
 
-        response = self.client.get(add_honor_mode_to_course_url, {'course_id': self.course.id})
+        response = self.client.get(self.url, {'course_id': self.course.id})
         self.assertEqual(200, response.status_code)
         self.assertEqual('success', response.content)
 
@@ -269,8 +269,6 @@ class AddHonorModeToCourseTest(ModuleStoreTestCase, UrlResetMixin):
         test that fails to create the course mode honor
         when not giving the course_id in the query parameters
         """
-        add_honor_mode_to_course_url = reverse('course_modes.views.add_honor_mode_to_course')
-
-        response = self.client.get(add_honor_mode_to_course_url, {'course_id': ''})
+        response = self.client.get(self.url, {'course_id': ''})
         self.assertEqual(400, response.status_code)
         self.assertEqual('course_id is None', response.content)
