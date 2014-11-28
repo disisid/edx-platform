@@ -19,8 +19,6 @@ from django.utils.translation import ugettext as _
 import mongoengine
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
-# from xmodule.modulestore.tests.django_utils import TEST_DATA_DIR
-from xmodule.modulestore.tests.django_utils import TEST_DATA_MOCK_MODULESTORE, TEST_DATA_XML_MODULESTORE
 from dashboard.models import CourseImportLog
 from dashboard.sysadmin import Users
 from dashboard.git_import import GitImportError
@@ -28,12 +26,13 @@ from external_auth.models import ExternalAuthMap
 from student.roles import CourseStaffRole, GlobalStaff
 from student.tests.factories import UserFactory
 from xmodule.modulestore.django import modulestore
-from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
-from xmodule.modulestore.xml import XMLModuleStore
-# from xmodule.modulestore.tests.django_utils import xml_store_config
+from xmodule.modulestore.tests.django_utils import (
+    ModuleStoreTestCase,
+    TEST_DATA_MOCK_MODULESTORE,
+    TEST_DATA_XML_MODULESTORE
+)
 from xmodule.modulestore.tests.mongo_connection import MONGO_PORT_NUM, MONGO_HOST
-
-# TEST_DATA_XML_MODULESTORE = xml_store_config(TEST_DATA_DIR, ['empty'])
+from xmodule.modulestore.xml import XMLModuleStore
 
 
 TEST_MONGODB_LOG = {
