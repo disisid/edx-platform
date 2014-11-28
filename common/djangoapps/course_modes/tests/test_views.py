@@ -18,6 +18,8 @@ from student.models import CourseEnrollment
 
 # Since we don't need any XML course fixtures, use a modulestore configuration
 # that disables the XML modulestore.
+from util.testing import UrlResetMixin
+
 MODULESTORE_CONFIG = mixed_store_config(settings.COMMON_TEST_DATA_ROOT, {}, include_xml=False)
 
 
@@ -241,7 +243,7 @@ class CourseModeViewTest(ModuleStoreTestCase):
 @patch.dict('django.conf.settings.FEATURES', {'CONVERT_TO_PAID_COURSE_REGISTRATION_MODE_FOR_TESTING': True})
 @override_settings(MODULESTORE=MODULESTORE_CONFIG)
 @unittest.skipUnless(settings.ROOT_URLCONF == 'lms.urls', 'Test only valid in lms')
-class AddHonorModeToCourseTest(ModuleStoreTestCase):
+class AddHonorModeToCourseTest(ModuleStoreTestCase, UrlResetMixin):
     """
     Unittests for course_modes.views.add_honor_mode_to_course
     """
