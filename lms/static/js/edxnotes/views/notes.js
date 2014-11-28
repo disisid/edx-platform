@@ -4,7 +4,7 @@
          'jquery', 'underscore', 'annotator', 'js/edxnotes/utils/logger', 'js/edxnotes/views/shim'
     ], function ($, _, Annotator, Logger) {
         var plugins = ['Store'],
-            getOptions, setupPlugins, updateHeaders, getAnnotator;
+            getOptions, setupPlugins, updateHeaders, getAnnotator, params, visibility = null;
 
         /**
          * Returns options for the annotator.
@@ -66,11 +66,15 @@
          * @param {String} params.token An authentication token.
          * @return {Object} An instance of Annotator.js.
          **/
-        getAnnotator = function (element, params) {
-            var el = $(element),
-                options = getOptions(el, params),
-                annotator = el.annotator(options).data('annotator'),
-                logger = new Logger(element.id, params.debug);
+        getAnnotator = function (element, parameters) {
+            var el = $(element), options, annotator, logger;
+
+            if (parameters) {
+                params = parameters;
+            }
+            options = getOptions(el, params),
+            annotator = el.annotator(options).data('annotator'),
+            logger = new Logger(element.id, params.debug);
 
             setupPlugins(annotator, plugins, options);
             updateHeaders(el, params.token);
@@ -84,7 +88,8 @@
         };
 
         return {
-            factory: getAnnotator
+            factory: getAnnotator,
+            visibility: visibility
         };
     });
 }).call(this, define || RequireJS.define);

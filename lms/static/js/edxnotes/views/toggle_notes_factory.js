@@ -7,6 +7,7 @@
 
             checkbox.on('click', function(event) {
                 visibility = !visibility;
+                Notes.visibility = visibility;
                 toggleCheckbox();
 
                 $.ajax({
@@ -39,8 +40,7 @@
 
             function createAnnotator() {
                 $('.edx-notes-wrapper').each(function(){
-                    // HOW DO WE GET PARAMS HERE?
-                    // Notes.factory(this, ${json.dumps(params)});
+                    Notes.factory(this);
                 });
             }
 

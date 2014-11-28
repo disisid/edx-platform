@@ -4,7 +4,11 @@
         return function (elementId, params, visibility) {
             var element = document.getElementById(elementId);
 
-            if (visibility) {
+            if (Notes.visibility === null) {
+                Notes.visibility = visibility;
+            }
+
+            if (Notes.visibility) {
                 // Destroy all instances except those found on page being loaded
                 destroyAllInstancesExcept(getIds());
                 createAnnotator();
