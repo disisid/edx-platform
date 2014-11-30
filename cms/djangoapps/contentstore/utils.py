@@ -1,4 +1,5 @@
-# pylint: disable=E1103, E1101
+# pylint: disable=E1103
+# pylint: disable=no-member
 
 import copy
 import logging
