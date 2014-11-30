@@ -1107,7 +1107,7 @@ def generate_registration_codes(request, course_id):
         internal_reference=internal_reference, customer_reference_number=customer_reference_number
     )
     registration_codes = []
-    for _ in range(course_code_number):  # pylint: disable=W0621
+    for _ in range(course_code_number):  # pylint: disable=redefined-outer-name
         generated_registration_code = save_registration_code(request.user, course_id, sale_invoice, order=None)
         registration_codes.append(generated_registration_code)
 
