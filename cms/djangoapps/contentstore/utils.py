@@ -1,4 +1,3 @@
-# pylint: disable=E1103
 # pylint: disable=no-member
 
 import copy
